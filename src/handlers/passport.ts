@@ -7,6 +7,8 @@ import passport from 'passport';
 passport.serializeUser((User as any).serializeUser());
 passport.deserializeUser((User as any).deserializeUser());
 
+// Local
+passport.use(User.createStrategy());
 
 const opts: any = {};
 opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
@@ -16,7 +18,7 @@ opts.secretOrKey = SECRET;
     return done(undefined, false);
 });
 
-passport.use(stratagy);
+
 
 
 
