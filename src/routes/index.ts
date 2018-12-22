@@ -12,8 +12,14 @@ router.get('/', homeController.index);
 
 
 // Auth routes
+
+// Register for new account
 router.post('/register', userController.validateRegister, userController.register);
+
+// Login
 router.post('/login', authController.login);
 
+// Request password reset
+router.post('/forgotten', authController.forgot);
 
 export default router;

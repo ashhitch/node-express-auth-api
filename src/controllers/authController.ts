@@ -83,12 +83,11 @@ export const isLoggedIn = (req: Request, res: Response, next: NextFunction) => {
   res.status(200).json({ status: 'error', msg: 'Oops you must be logged in to do that!' });
 };
 
-exports.forgot = async (req: Request, res: Response) => {
+export const forgot = async (req: Request, res: Response) => {
   // 1. See if a user with that email exists
   const user = await User.findOne({ email: req.body.email });
   if (!user) {
-    req.flash('error', 'No account with that email exists.');
-    return res.redirect('/login');
+    return res.json({status: 'error', message: 'No account with that email exists.'});
   }
   // 2. Set reset tokens and expiry on their account
   (user as any).resetPasswordToken = crypto.randomBytes(20).toString('hex');
@@ -106,16 +105,17 @@ exports.forgot = async (req: Request, res: Response) => {
   res.json({ status: 'success', msg: 'You have been emailed a password reset link.' });
 };
 
-export const reset = async (req: Request, res: Response) => {
+export const reset = async (req: Request, res: Response, next: NextFunction) => {
   const user = await User.findOne({
-    resetPasswordToken: req.params.token,
+    resetPasswordToken: req.body.token,
     resetPasswordExpires: { $gt: Date.now() }
   });
   if (!user) {
     return res.json({ status: 'error', msg: 'Password reset is invalid or has expired' });
   }
-  // if there is a user, show the rest password form
-  res.json({ status: 'success', msg: 'password reset .' });
+  // if there is a user,
+  next(); // keepit going!
+  return;
 };
 
 export const confirmedPasswords = (req: Request, res: Response, next: NextFunction) => {
@@ -123,8 +123,7 @@ export const confirmedPasswords = (req: Request, res: Response, next: NextFuncti
     next(); // keepit going!
     return;
   }
-  res.status(401);
-  res.json({ status: 'error', msg: 'Passwords do not match!' });
+  res.status(401).json({ status: 'error', msg: 'Passwords do not match!' });
 };
 
 export const update = async (req: Request, res: Response) => {

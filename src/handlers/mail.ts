@@ -14,7 +14,7 @@ const transport = nodemailer.createTransport(({
 } as any));
 
 const generateHTML = (filename: any, options = {}) => {
-  const html = pug.renderFile(`${__dirname}/../views/email/${filename}.pug`, options);
+  const html = pug.renderFile(`${__dirname}/../../views/email/${filename}.pug`, options);
   const inlined = juice(html);
   return inlined;
 };
