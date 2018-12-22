@@ -32,12 +32,17 @@ export const validateRegister = (req: Request, res: Response, next: NextFunction
 };
 
 export const register = async (req: Request, res: Response, next: NextFunction) => {
-  const user = new User({ email: req.body.email, name: req.body.name });
+  const user: any = new User({ email: req.body.email, name: req.body.name });
   const register = promisify((User as any).register).bind(User);
   await register(user, req.body.password);
 
     // // create a token
-    const token = jwt.sign({ id: user._id }, SECRET, {
+    const body = {
+      _id: user._id,
+      email: user.email
+    };
+
+    const token = jwt.sign({ user: body }, SECRET, {
       expiresIn: 86400 // expires in 24 hours
     });
 

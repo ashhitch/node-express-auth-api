@@ -12,24 +12,36 @@ import mongoose from 'mongoose';
 import passport from 'passport';
 import { promisify } from 'es6-promisify';
 
-export const login =  (req: Request, res: Response, next: NextFunction) => {
-    passport.authenticate('local', {session: false}, (err, user, info) => {
-        if (err || !user) {
-            return res.status(400).json({
-                message: 'Something is not right',
-                user   : user
-            });
-        }
-       req.login(user, {session: false}, (err) => {
-           if (err) {
-               res.send(err);
-           }
-           // generate a signed son web token with the contents of user object and return it in the response
-           const token = jwt.sign(user, 'your_jwt_secret');
-           return res.json({user, token});
+export const login = async  (req: Request, res: Response, next: NextFunction) => {
+  passport.authenticate('local', async (err, user, info) => {
+    try {
+      if (err || !user) {
+        const error = new Error('Opps looks like something went wrong!');
+        return next(error);
+      }
+      req.login(user, {
+        session: false
+      }, async (error) => {
+        if (error) return next(error);
+        // We don't want to store the sensitive information such as the
+        // user password in the token so we pick only the email and id
+        const body = {
+          _id: user._id,
+          email: user.email
+        };
+        // Sign the JWT token and populate the payload with the user email and id
+        const token = jwt.sign({
+          user: body
+        }, SECRET);
+        // Send back the token to the user
+        return res.json({
+          token
         });
-    })(req, res);
-
+      });
+    } catch (error) {
+      return next(error);
+    }
+  })(req, res, next);
 };
 
 // export const login = passport.authenticate('jwt', { session: false });
