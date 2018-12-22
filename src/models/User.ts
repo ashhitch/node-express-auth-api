@@ -12,8 +12,8 @@ export type UserModel = mongoose.Document & {
   email: string,
   name: string,
   password: string,
-  passwordResetToken: string,
-  passwordResetExpires: Date,
+  resetPasswordToken: string,
+  resetPasswordExpires: Date,
 
   tokens: AuthToken[],
 
@@ -39,8 +39,8 @@ const userSchema = new mongoose.Schema({
     required: 'Please Supply an email address'
   },
   password: String,
-  passwordResetToken: String,
-  passwordResetExpires: Date,
+  resetPasswordToken: String,
+  resetPasswordExpires: Date,
   tokens: Array,
     name: String
 

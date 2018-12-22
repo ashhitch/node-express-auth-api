@@ -126,9 +126,9 @@ export const confirmedPasswords = (req: Request, res: Response, next: NextFuncti
   res.status(401).json({ status: 'error', msg: 'Passwords do not match!' });
 };
 
-export const update = async (req: Request, res: Response) => {
+export const updatePassword = async (req: Request, res: Response) => {
   const user = await User.findOne({
-    resetPasswordToken: req.params.token,
+    resetPasswordToken: req.body.token,
     resetPasswordExpires: { $gt: Date.now() }
   });
 
