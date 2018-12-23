@@ -18,8 +18,12 @@ router.post('/register', userController.validateRegister, userController.registe
 // Login
 router.post('/login', authController.login);
 
+
+// Get user details
+router.get('/account', authController.isLoggedIn, userController.account);
+
 // Update user account
-router.post('/account', catchErrors(userController.updateAccount));
+router.post('/account',  authController.isLoggedIn, catchErrors(userController.updateAccount));
 
 // Request password reset
 router.post('/account/forgotten', catchErrors(authController.forgot));
@@ -29,5 +33,6 @@ router.post('/account/reset',
   authController.confirmedPasswords,
   catchErrors(authController.updatePassword)
 );
+
 
 export default router;

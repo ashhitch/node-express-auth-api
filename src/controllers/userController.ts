@@ -50,7 +50,9 @@ export const register = async (req: Request, res: Response, next: NextFunction) 
 };
 
 export const account = (req: Request, res: Response) => {
-  res.json({ title: 'Edit Your Account' });
+  const user = (res as any).user;
+
+  res.json({ status: 'success', user });
 };
 
 export const updateAccount = async (req: Request, res: Response) => {

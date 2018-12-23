@@ -36,7 +36,10 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
             {
               user: body
             },
-            SECRET
+            SECRET,
+            {
+              expiresIn: 86400 // expires in 24 hours
+            }
           );
           // Send back the token to the user
           return res.json({
@@ -61,13 +64,15 @@ export const logout = (req: Request, res: Response) => {
 
 export const isLoggedIn = (req: Request, res: Response, next: NextFunction) => {
   const token: string = req.headers['x-access-token'] as string;
+  console.log({token});
 
   if (!token) {
     return res.status(401).json({ auth: false, message: 'No token provided.' });
   }
 
   jwt.verify(token, SECRET, (err, decoded: any) => {
-    if (err) {
+    console.log({decoded});
+    if (err || !decoded) {
       return res.status(500).json({ auth: false, message: 'Failed to authenticate token.' });
     }
 
@@ -78,15 +83,17 @@ export const isLoggedIn = (req: Request, res: Response, next: NextFunction) => {
       if (!user) {
         return res.status(404).send('No user found.');
       }
-      res.status(200).send(user);
+     // res.status(200).send(user);
     });
   });
   // first check if the user is authenticated
   if (req.isAuthenticated()) {
     next(); // carry on! They are logged in!
     return;
+  } else {
+
+    res.status(500).json({ status: 'error', msg: 'Oops you must be logged in to do that!' });
   }
-  res.status(200).json({ status: 'error', msg: 'Oops you must be logged in to do that!' });
 };
 
 export const forgot = async (req: Request, res: Response) => {
