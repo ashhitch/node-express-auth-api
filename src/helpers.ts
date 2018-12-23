@@ -8,5 +8,6 @@ const prod = ENVIRONMENT === 'production'; // Anything else is treated as 'dev'
 export const SECRET = process.env['SECRET'];
 export const KEY = process.env['KEY'];
 export const DATABASE = process.env['DATABASE'];
+export const UI = process.env['UI_URL'];
 
 
