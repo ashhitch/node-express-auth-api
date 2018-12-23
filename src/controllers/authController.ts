@@ -62,38 +62,34 @@ export const logout = (req: Request, res: Response) => {
   res.json({ status: 'success', msg: 'You are now logged out! 👋' });
 };
 
-export const isLoggedIn = (req: Request, res: Response, next: NextFunction) => {
+export const isLoggedIn = async (req: Request, res: Response, next: NextFunction) => {
   const token: string = req.headers['x-access-token'] as string;
-  console.log({token});
+  console.log({ token });
 
   if (!token) {
     return res.status(401).json({ auth: false, message: 'No token provided.' });
   }
 
-  jwt.verify(token, SECRET, (err, decoded: any) => {
-    console.log({decoded});
+  await jwt.verify(token, SECRET, (err, decoded: any) => {
     if (err || !decoded) {
       return res.status(500).json({ auth: false, message: 'Failed to authenticate token.' });
     }
 
-    User.findById(decoded.id, { password: 0 }, (err, user) => {
+    User.findById(decoded.user._id, { password: 0 }, (err, user) => {
       if (err) {
-        return res.status(500).send('There was a problem finding the user.');
+        return res.status(500).json('There was a problem finding the user.');
       }
       if (!user) {
-        return res.status(404).send('No user found.');
+        return res.status(404).json('No user found.');
       }
-     // res.status(200).send(user);
+      // res.status(200).send(user);
+
+      req.user = {
+        user: user.toJSON()
+      };
+      return next();
     });
   });
-  // first check if the user is authenticated
-  if (req.isAuthenticated()) {
-    next(); // carry on! They are logged in!
-    return;
-  } else {
-
-    res.status(500).json({ status: 'error', msg: 'Oops you must be logged in to do that!' });
-  }
 };
 
 export const forgot = async (req: Request, res: Response) => {

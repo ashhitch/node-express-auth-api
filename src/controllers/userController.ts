@@ -50,7 +50,7 @@ export const register = async (req: Request, res: Response, next: NextFunction) 
 };
 
 export const account = (req: Request, res: Response) => {
-  const user = (res as any).user;
+  const user = (req as any).user;
 
   res.json({ status: 'success', user });
 };
