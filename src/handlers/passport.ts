@@ -13,7 +13,7 @@ const localOptions = {
 };
 
 const localLogin = new LocalStrategy(localOptions, function(email, password, done) {
-
+console.log({password});
   User.findOne({
       email: email
   }, function(err, user) {
@@ -23,7 +23,7 @@ const localLogin = new LocalStrategy(localOptions, function(email, password, don
       }
 
       if (!user) {
-          return done(undefined, false, { error: 'Login failed. Please try again.' });
+          return done(undefined, false, { message: 'Login failed. Please try again.' });
       }
 
       (user as any).comparePassword(password, function(err: any, isMatch: boolean) {
@@ -33,7 +33,7 @@ const localLogin = new LocalStrategy(localOptions, function(email, password, don
           }
 
           if (!isMatch) {
-              return done(undefined, false, { error: 'Login failed. Please try again.' });
+              return done(undefined, false, { message: 'Login failed. Please try again.' });
           }
 
           return done(undefined, user);
@@ -45,7 +45,7 @@ const localLogin = new LocalStrategy(localOptions, function(email, password, don
 });
 
 const jwtOptions = {
-  jwtFromRequest: ExtractJwt.fromAuthHeader(),
+  jwtFromRequest: ExtractJwt.fromAuthHeaderWithScheme('jwt'),
   secretOrKey: SECRET
 };
 
@@ -68,6 +68,6 @@ const jwtLogin = new JwtStrategy(jwtOptions, function(payload, done) {
 });
 
 passport.use(jwtLogin);
-passport.use(localLogin);
+ passport.use(localLogin);
 
 

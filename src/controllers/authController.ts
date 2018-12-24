@@ -12,50 +12,25 @@ import mongoose from 'mongoose';
 import passport from 'passport';
 import { promisify } from 'es6-promisify';
 
-export const login = passport.authenticate('local', {session: false});
-export const requireAuth = passport.authenticate('jwt', {session: false});
+export const requireLogin = passport.authenticate('local', {session: false});
+export const isLoggedIn = passport.authenticate('jwt', {session: false});
 
+export const login = function(req: Request, res: Response, next: NextFunction) {
 
-// export const login = passport.authenticate('jwt', { session: false });
+  const token = generateToken(req.user);
+
+  res.status(200).json({
+      token,
+      user: req.user
+  });
+
+};
 
 export const logout = (req: Request, res: Response) => {
   req.logout();
   res.status(200);
   // @TODO destroy the token here
   res.json({ status: 'success', msg: 'You are now logged out! 👋' });
-};
-
-export const isLoggedIn = async (req: Request, res: Response, next: NextFunction) => {
-  const token = extractToken(req.headers);
-
-  if (!token) {
-    return res.status(401).json({ auth: false, message: 'No token provided.' });
-  }
-
-  await jwt.verify(token, SECRET, (err, decoded: any) => {
-    if (err || !decoded) {
-      return res.status(500).json({ auth: false, message: 'Failed to authenticate token.' });
-    }
-
-    User.findById(decoded.user._id, { password: 0 }, (err, user: IUser) => {
-      if (err) {
-        return res.status(500).json({status: 'error', msg: 'There was a problem finding the user.'});
-      }
-      if (!user) {
-        return res.status(404).json({status: 'error', msg: 'No user found.'});
-      }
-      // res.status(200).send(user);
-      const returnUser = {
-        _id: user._id,
-        email: user.email,
-        name: user.name
-      };
-
-      req.user = returnUser;
-
-      return next();
-    });
-  });
 };
 
 export const forgot = async (req: Request, res: Response) => {

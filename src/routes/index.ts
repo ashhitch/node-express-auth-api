@@ -16,7 +16,7 @@ router.get('/', homeController.index);
 router.post('/register', userController.validateRegister, userController.register);
 
 // Login
-router.post('/login', authController.login);
+router.post('/login', authController.requireLogin,  authController.login);
 
 
 // Get user details
