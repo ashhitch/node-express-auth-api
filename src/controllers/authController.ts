@@ -12,31 +12,9 @@ import mongoose from 'mongoose';
 import passport from 'passport';
 import { promisify } from 'es6-promisify';
 
-export const login = async (req: Request, res: Response, next: NextFunction) => {
-  passport.authenticate('local', async (err, user, info) => {
-    try {
-      if (err || !user) {
-        return res.json({ status: 'error', msg: 'Opps looks like something went wrong!' });
-      }
-      req.login(
-        user,
-        {
-          session: false
-        },
-        async error => {
-          if (error) {
-            return next(error);
-          }
-          const token = generateToken(user);
-          // Send back the token to the user
-          return res.json({ status: 'success', auth: true, token: token });
-        }
-      );
-    } catch (error) {
-      return next(error);
-    }
-  })(req, res, next);
-};
+export const login = passport.authenticate('local', {session: false});
+export const requireAuth = passport.authenticate('jwt', {session: false});
+
 
 // export const login = passport.authenticate('jwt', { session: false });
 
