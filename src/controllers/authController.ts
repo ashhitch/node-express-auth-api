@@ -2,7 +2,7 @@ import './../handlers/passport';
 
 import * as mail from './../handlers/mail';
 
-import { AuthToken, default as User, UserModel } from '../models/User';
+import { AuthToken, IUser, default as User } from '../models/User';
 import { NextFunction, Request, Response } from 'express';
 import { SECRET, UI } from './../helpers';
 
@@ -75,7 +75,7 @@ export const isLoggedIn = async (req: Request, res: Response, next: NextFunction
       return res.status(500).json({ auth: false, message: 'Failed to authenticate token.' });
     }
 
-    User.findById(decoded.user._id, { password: 0 }, (err, user) => {
+    User.findById(decoded.user._id, { password: 0 }, (err, user: IUser) => {
       if (err) {
         return res.status(500).json('There was a problem finding the user.');
       }
@@ -83,10 +83,14 @@ export const isLoggedIn = async (req: Request, res: Response, next: NextFunction
         return res.status(404).json('No user found.');
       }
       // res.status(200).send(user);
-
-      req.user = {
-        user: user.toJSON()
+      const returnUser = {
+        _id: user._id,
+        email: user.email,
+        name: user.name
       };
+
+      req.user = returnUser;
+
       return next();
     });
   });

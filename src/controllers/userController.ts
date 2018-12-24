@@ -1,6 +1,6 @@
 import '../handlers/passport';
 
-import { AuthToken, default as User, UserModel } from '../models/User';
+import { AuthToken, IUser, default as User } from '../models/User';
 import { NextFunction, Request, Response } from 'express';
 
 import { SECRET } from './../helpers';

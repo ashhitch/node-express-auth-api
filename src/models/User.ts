@@ -8,19 +8,16 @@ import mongoose from 'mongoose';
 import passportLocalMongoose from 'passport-local-mongoose';
 import validator from 'validator';
 
-export type UserModel = mongoose.Document & {
-  email: string,
-  name: string,
-  password: string,
-  resetPasswordToken: string,
-  resetPasswordExpires: Date,
-
-  tokens: AuthToken[],
-
-
-  comparePassword: comparePasswordFunction,
-  gravatar: (size: number) => string
-};
+export interface IUser extends mongoose.Document  {
+  email: any;
+  name: string;
+  password: string;
+  resetPasswordToken: string;
+  resetPasswordExpires: Date;
+  tokens: AuthToken[];
+  comparePassword: comparePasswordFunction;
+  gravatar: (size: number) => string;
+}
 
 type comparePasswordFunction = (candidatePassword: string, cb: (err: any, isMatch: any) => {}) => void;
 

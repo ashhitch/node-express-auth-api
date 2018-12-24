@@ -2026,7 +2026,7 @@ json-stringify-safe@~5.0.1:
   version "5.0.1"
   resolved "https://registry.yarnpkg.com/json-stringify-safe/-/json-stringify-safe-5.0.1.tgz#1296a2d58fd45f19a0f6ce01d65701e2c735b6eb"
 
-jsonwebtoken@^8.2.0, jsonwebtoken@^8.4.0:
+jsonwebtoken@^8.4.0:
   version "8.4.0"
   resolved "https://registry.yarnpkg.com/jsonwebtoken/-/jsonwebtoken-8.4.0.tgz#8757f7b4cb7440d86d5e2f3becefa70536c8e46a"
   dependencies:
@@ -2809,13 +2809,6 @@ pascalcase@^0.1.1:
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/pascalcase/-/pascalcase-0.1.1.tgz#b363e55e8006ca6fe21784d2db22bd15d7917f14"
 
-passport-jwt@^4.0.0:
-  version "4.0.0"
-  resolved "http://registry.npmjs.org/passport-jwt/-/passport-jwt-4.0.0.tgz#7f0be7ba942e28b9f5d22c2ebbb8ce96ef7cf065"
-  dependencies:
-    jsonwebtoken "^8.2.0"
-    passport-strategy "^1.0.0"
-
 passport-local-mongoose@^5.0.1:
   version "5.0.1"
   resolved "https://registry.yarnpkg.com/passport-local-mongoose/-/passport-local-mongoose-5.0.1.tgz#7b45ae6bcb6e8a7be26a4a95a7787e4d14130fc7"
@@ -2832,7 +2825,7 @@ passport-local@^1.0.0:
   dependencies:
     passport-strategy "1.x.x"
 
-passport-strategy@1.x.x, passport-strategy@^1.0.0:
+passport-strategy@1.x.x:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/passport-strategy/-/passport-strategy-1.0.0.tgz#b5539aa8fc225a3d1ad179476ddf236b440f52e4"
 
