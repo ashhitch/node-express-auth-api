@@ -2,7 +2,7 @@ import '../handlers/passport';
 
 import { AuthToken, IUser, default as User } from '../models/User';
 import { NextFunction, Request, Response } from 'express';
-import { SECRET, generateToken } from './../helpers';
+import { SECRET, extractToken, generateToken } from './../helpers';
 
 import jwt from 'jsonwebtoken';
 import { promisify } from 'es6-promisify';
@@ -46,25 +46,25 @@ export const account = (req: Request, res: Response) => {
 };
 
 export const updateAccount = async (req: Request, res: Response) => {
-  const token: string = req.headers['x-access-token'] as string;
+  const token = extractToken(req.headers);
+
   let userID;
 
   if (!token) {
     return res.status(401).json({ auth: false, message: 'No token provided.' });
   }
 
-
-  await jwt.verify(token, SECRET, async (err, decoded: any)  => {
+  await jwt.verify(token, SECRET, async (err, decoded: any) => {
     if (err || !decoded) {
       return res.status(500).json({ auth: false, message: 'Failed to authenticate token.' });
     }
 
-     await User.findById(decoded.user._id, { password: 0 }, (err, user: IUser) => {
+    await User.findById(decoded.user._id, { password: 0 }, (err, user: IUser) => {
       if (err) {
-        return res.status(500).json({status: 'error', msg: 'There was a problem finding the user.'});
+        return res.status(500).json({ status: 'error', msg: 'There was a problem finding the user.' });
       }
       if (!user) {
-        return res.status(404).json({status: 'error', msg: 'No user found.'});
+        return res.status(404).json({ status: 'error', msg: 'No user found.' });
       }
 
       userID = decoded.user._id;
@@ -72,9 +72,8 @@ export const updateAccount = async (req: Request, res: Response) => {
     });
   });
 
-
   if (!userID) {
-    return res.status(500).json({ status: 'error', msg: 'There was a problem updating the user.'});
+    return res.status(500).json({ status: 'error', msg: 'There was a problem updating the user.' });
   }
 
   const updates = {
@@ -91,6 +90,4 @@ export const updateAccount = async (req: Request, res: Response) => {
   const newToken = generateToken(newUser);
 
   return res.status(200).json({ status: 'success', msg: 'Updated the profile!', user: newUser, token: newToken });
-
-
 };

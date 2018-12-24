@@ -4,7 +4,7 @@ import * as mail from './../handlers/mail';
 
 import { AuthToken, IUser, default as User } from '../models/User';
 import { NextFunction, Request, Response } from 'express';
-import { SECRET, UI, generateToken } from './../helpers';
+import { SECRET, UI, extractToken, generateToken } from './../helpers';
 
 import crypto from 'crypto';
 import jwt from 'jsonwebtoken';
@@ -48,7 +48,7 @@ export const logout = (req: Request, res: Response) => {
 };
 
 export const isLoggedIn = async (req: Request, res: Response, next: NextFunction) => {
-  const token: string = req.headers['x-access-token'] as string;
+  const token = extractToken(req.headers);
 
   if (!token) {
     return res.status(401).json({ auth: false, message: 'No token provided.' });
