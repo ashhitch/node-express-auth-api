@@ -46,7 +46,7 @@ export const register = async (req: Request, res: Response, next: NextFunction) 
       expiresIn: 86400 // expires in 24 hours
     });
 
-    res.status(200).json({ auth: true, token: token });
+    res.status(200).json({ status: 'success', auth: true, token: token });
 };
 
 export const account = (req: Request, res: Response) => {

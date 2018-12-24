@@ -42,9 +42,7 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
             }
           );
           // Send back the token to the user
-          return res.json({
-            token
-          });
+          return res.json({ status: 'success', auth: true, token: token });
         }
       );
     } catch (error) {
