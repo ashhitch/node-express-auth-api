@@ -16,6 +16,9 @@ Run in watch mode with node debug:
 
 `yarn watch-debug` or `npm run watch-debug`
 
+Copy `.env.example` to `.env`
+
+Add DB and SMTP details ( I use [mlab](https://mlab.com/) and [mailtrap](https://mailtrap.io) )
 
 ## Current features
 - Login
