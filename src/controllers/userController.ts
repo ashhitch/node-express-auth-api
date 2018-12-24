@@ -46,15 +46,51 @@ export const account = (req: Request, res: Response) => {
 };
 
 export const updateAccount = async (req: Request, res: Response) => {
+  const token: string = req.headers['x-access-token'] as string;
+  let userID;
+
+  if (!token) {
+    return res.status(401).json({ auth: false, message: 'No token provided.' });
+  }
+
+
+  await jwt.verify(token, SECRET, async (err, decoded: any)  => {
+    if (err || !decoded) {
+      return res.status(500).json({ auth: false, message: 'Failed to authenticate token.' });
+    }
+
+     await User.findById(decoded.user._id, { password: 0 }, (err, user: IUser) => {
+      if (err) {
+        return res.status(500).json({status: 'error', msg: 'There was a problem finding the user.'});
+      }
+      if (!user) {
+        return res.status(404).json({status: 'error', msg: 'No user found.'});
+      }
+
+      userID = decoded.user._id;
+      return;
+    });
+  });
+
+
+  if (!userID) {
+    return res.status(500).json({ status: 'error', msg: 'There was a problem updating the user.'});
+  }
+
   const updates = {
     name: req.body.name,
     email: req.body.email
   };
 
-  const user = await User.findOneAndUpdate(
-    { _id: req.user._id },
+  const newUser: IUser = await (User as any).findOneAndUpdate(
+    { _id: userID },
     { $set: updates },
     { new: true, runValidators: true, context: 'query' }
   );
-  res.json({ msg: 'Updated the profile!', data: user });
+
+  const newToken = generateToken(newUser);
+
+  return res.status(200).json({ status: 'success', msg: 'Updated the profile!', user: newUser, token: newToken });
+
+
 };

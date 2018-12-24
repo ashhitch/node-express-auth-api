@@ -49,7 +49,6 @@ export const logout = (req: Request, res: Response) => {
 
 export const isLoggedIn = async (req: Request, res: Response, next: NextFunction) => {
   const token: string = req.headers['x-access-token'] as string;
-  console.log({ token });
 
   if (!token) {
     return res.status(401).json({ auth: false, message: 'No token provided.' });
@@ -62,10 +61,10 @@ export const isLoggedIn = async (req: Request, res: Response, next: NextFunction
 
     User.findById(decoded.user._id, { password: 0 }, (err, user: IUser) => {
       if (err) {
-        return res.status(500).json('There was a problem finding the user.');
+        return res.status(500).json({status: 'error', msg: 'There was a problem finding the user.'});
       }
       if (!user) {
-        return res.status(404).json('No user found.');
+        return res.status(404).json({status: 'error', msg: 'No user found.'});
       }
       // res.status(200).send(user);
       const returnUser = {
