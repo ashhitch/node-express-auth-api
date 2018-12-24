@@ -2,13 +2,12 @@ import '../handlers/passport';
 
 import { AuthToken, IUser, default as User } from '../models/User';
 import { NextFunction, Request, Response } from 'express';
+import { SECRET, generateToken } from './../helpers';
 
-import { SECRET } from './../helpers';
 import jwt from 'jsonwebtoken';
 import { promisify } from 'es6-promisify';
 
 // err: Error, user: UserModel, info: IVerifyOptions
-
 
 export const validateRegister = (req: Request, res: Response, next: NextFunction) => {
   req.sanitizeBody('name');
@@ -24,8 +23,7 @@ export const validateRegister = (req: Request, res: Response, next: NextFunction
 
   const errors = req.validationErrors();
   if (errors) {
-
-    res.status(400).json({ title: 'Register', errors});
+    res.status(400).json({ title: 'Register', errors });
     return; // stop the fn from running
   }
   next(); // there were no errors!
@@ -36,23 +34,15 @@ export const register = async (req: Request, res: Response, next: NextFunction) 
   const register = promisify((User as any).register).bind(User);
   await register(user, req.body.password);
 
-    // // create a token
-    const body = {
-      _id: user._id,
-      email: user.email
-    };
+  const token = generateToken(user);
 
-    const token = jwt.sign({ user: body }, SECRET, {
-      expiresIn: 86400 // expires in 24 hours
-    });
-
-    res.status(200).json({ status: 'success', auth: true, token: token });
+  res.status(200).json({ status: 'success', auth: true, token: token });
 };
 
 export const account = (req: Request, res: Response) => {
   const user = (req as any).user;
-
-  res.status(200).json({ status: 'success', user });
+  const token = generateToken(user);
+  res.status(200).json({ status: 'success', user, token });
 };
 
 export const updateAccount = async (req: Request, res: Response) => {
@@ -66,5 +56,5 @@ export const updateAccount = async (req: Request, res: Response) => {
     { $set: updates },
     { new: true, runValidators: true, context: 'query' }
   );
-  res.json({msg: 'Updated the profile!', data: user});
+  res.json({ msg: 'Updated the profile!', data: user });
 };

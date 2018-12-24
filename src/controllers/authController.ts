@@ -4,7 +4,7 @@ import * as mail from './../handlers/mail';
 
 import { AuthToken, IUser, default as User } from '../models/User';
 import { NextFunction, Request, Response } from 'express';
-import { SECRET, UI } from './../helpers';
+import { SECRET, UI, generateToken } from './../helpers';
 
 import crypto from 'crypto';
 import jwt from 'jsonwebtoken';
@@ -24,23 +24,10 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
           session: false
         },
         async error => {
-          if (error) return next(error);
-          // We don't want to store the sensitive information such as the
-          // user password in the token so we pick only the email and id
-          const body = {
-            _id: user._id,
-            email: user.email
-          };
-          // Sign the JWT token and populate the payload with the user email and id
-          const token = jwt.sign(
-            {
-              user: body
-            },
-            SECRET,
-            {
-              expiresIn: 86400 // expires in 24 hours
-            }
-          );
+          if (error) {
+            return next(error);
+          }
+          const token = generateToken(user);
           // Send back the token to the user
           return res.json({ status: 'success', auth: true, token: token });
         }
