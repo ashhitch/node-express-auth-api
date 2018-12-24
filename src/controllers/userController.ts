@@ -52,7 +52,7 @@ export const register = async (req: Request, res: Response, next: NextFunction) 
 export const account = (req: Request, res: Response) => {
   const user = (req as any).user;
 
-  res.json({ status: 'success', user });
+  res.status(200).json({ status: 'success', user });
 };
 
 export const updateAccount = async (req: Request, res: Response) => {
