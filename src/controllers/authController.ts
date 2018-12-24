@@ -92,14 +92,20 @@ export const forgot = async (req: Request, res: Response) => {
   await user.save();
   // 3. Send them an email with the token
   const resetURL = `${UI}/account/reset/${(user as any).resetPasswordToken}`;
-  await mail.send({
-    user,
-    filename: 'password-reset',
-    subject: 'Password Reset',
-    resetURL
-  });
-  // 4. redirect to login page
-  res.json({ status: 'success', msg: 'You have been emailed a password reset link.' });
+  try {
+
+    await mail.send({
+      user,
+      filename: 'password-reset',
+      subject: 'Password Reset',
+      resetURL
+    });
+    // 4. send success response
+    res.status(200).json({ status: 'success', msg: 'You have been emailed a password reset link.' });
+
+  } catch (error) {
+    res.status(400).json({ status: 'error', msg: 'Could not send password request.', error });
+  }
 };
 
 export const reset = async (req: Request, res: Response, next: NextFunction) => {
