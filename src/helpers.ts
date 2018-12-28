@@ -13,9 +13,11 @@ export const KEY = process.env['KEY'];
 export const DATABASE = process.env['DATABASE'];
 export const UI = process.env['UI_URL'];
 
-
 export const extractToken = (headers: IncomingHttpHeaders) => {
-  let token: string = headers['x-access-token']  as string || headers['authorization']  as string;
+  let token: string = (headers['x-access-token'] as string) || (headers['authorization'] as string);
+  if (!token) {
+    return false;
+  }
   if (token.startsWith('Bearer ')) {
     // Remove Bearer from string
     token = token.slice(7, token.length);

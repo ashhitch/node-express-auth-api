@@ -16,7 +16,7 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
   passport.authenticate('local', async (err, user, info) => {
     try {
       if (err || !user) {
-        return res.json({ status: 'error', msg: 'Opps looks like something went wrong!' });
+        return res.json({ status: 'error', message: 'Opps looks like something went wrong!' });
       }
       req.login(
         user,
@@ -44,7 +44,7 @@ export const logout = (req: Request, res: Response) => {
   req.logout();
   res.status(200);
   // @TODO destroy the token here
-  res.json({ status: 'success', msg: 'You are now logged out! 👋' });
+  res.json({ status: 'success', message: 'You are now logged out! 👋' });
 };
 
 export const isLoggedIn = async (req: Request, res: Response, next: NextFunction) => {
@@ -61,10 +61,10 @@ export const isLoggedIn = async (req: Request, res: Response, next: NextFunction
 
     User.findById(decoded.user._id, { password: 0 }, (err, user: IUser) => {
       if (err) {
-        return res.status(500).json({status: 'error', msg: 'There was a problem finding the user.'});
+        return res.status(500).json({ status: 'error', message: 'There was a problem finding the user.' });
       }
       if (!user) {
-        return res.status(404).json({status: 'error', msg: 'No user found.'});
+        return res.status(422).json({ status: 'error', message: 'No user found.' });
       }
       // res.status(200).send(user);
       const returnUser = {
@@ -93,7 +93,6 @@ export const forgot = async (req: Request, res: Response) => {
   // 3. Send them an email with the token
   const resetURL = `${UI}/account/reset/${(user as any).resetPasswordToken}`;
   try {
-
     await mail.send({
       user,
       filename: 'password-reset',
@@ -101,10 +100,9 @@ export const forgot = async (req: Request, res: Response) => {
       resetURL
     });
     // 4. send success response
-    res.status(200).json({ status: 'success', msg: 'You have been emailed a password reset link.' });
-
+    res.status(200).json({ status: 'success', message: 'You have been emailed a password reset link.' });
   } catch (error) {
-    res.status(400).json({ status: 'error', msg: 'Could not send password request.', error });
+    res.status(400).json({ status: 'error', message: 'Could not send password request.', error });
   }
 };
 
@@ -114,7 +112,7 @@ export const reset = async (req: Request, res: Response, next: NextFunction) => 
     resetPasswordExpires: { $gt: Date.now() }
   });
   if (!user) {
-    return res.json({ status: 'error', msg: 'Password reset is invalid or has expired' });
+    return res.status(422).json({ status: 'error', message: 'Password reset is invalid or has expired' });
   }
   // if there is a user,
   next(); // keepit going!
@@ -126,7 +124,7 @@ export const confirmedPasswords = (req: Request, res: Response, next: NextFuncti
     next(); // keepit going!
     return;
   }
-  res.status(401).json({ status: 'error', msg: 'Passwords do not match!' });
+  res.status(401).json({ status: 'error', message: 'Passwords do not match!' });
 };
 
 export const updatePassword = async (req: Request, res: Response) => {
@@ -137,7 +135,7 @@ export const updatePassword = async (req: Request, res: Response) => {
 
   if (!user) {
     res.status(401);
-    return res.json({ status: 'error', msg: 'Password reset is invalid or has expired' });
+    return res.json({ status: 'error', message: 'Password reset is invalid or has expired' });
   }
 
   const setPassword: any = promisify((user as any).setPassword.bind(user));
@@ -146,5 +144,24 @@ export const updatePassword = async (req: Request, res: Response) => {
   (user as any).resetPasswordExpires = undefined;
   const updatedUser = await user.save();
 
-  return res.json({ status: 'success', msg: '💃 Nice! Your password has been reset!' });
+  return res.json({ status: 'success', message: '💃 Nice! Your password has been reset!' });
+};
+
+export const roleAuth = (roles: Array<String>) => {
+  return function(req: Request, res: Response, next: NextFunction) {
+    const { user } = req;
+
+    User.findById(user._id, function(err, foundUser: IUser) {
+      if (err) {
+        res.status(422).json({ status: 'error', message: 'No user found.' });
+        return next(err);
+      }
+
+      if (roles.indexOf(foundUser.role) > -1) {
+        return next();
+      }
+
+      return res.status(401).json({ status: 'error', message: 'You are not authorized to view this content' });
+    });
+  };
 };

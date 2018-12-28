@@ -61,10 +61,10 @@ export const updateAccount = async (req: Request, res: Response) => {
 
     await User.findById(decoded.user._id, { password: 0 }, (err, user: IUser) => {
       if (err) {
-        return res.status(500).json({ status: 'error', msg: 'There was a problem finding the user.' });
+        return res.status(500).json({ status: 'error', message: 'There was a problem finding the user.' });
       }
       if (!user) {
-        return res.status(404).json({ status: 'error', msg: 'No user found.' });
+        return res.status(404).json({ status: 'error', message: 'No user found.' });
       }
 
       userID = decoded.user._id;
@@ -73,7 +73,7 @@ export const updateAccount = async (req: Request, res: Response) => {
   });
 
   if (!userID) {
-    return res.status(500).json({ status: 'error', msg: 'There was a problem updating the user.' });
+    return res.status(500).json({ status: 'error', message: 'There was a problem updating the user.' });
   }
 
   const updates = {
@@ -90,5 +90,5 @@ export const updateAccount = async (req: Request, res: Response) => {
 
   const newToken = generateToken(newUser);
 
-  return res.status(200).json({ status: 'success', msg: 'Updated the profile!', user: newUser, token: newToken });
+  return res.status(200).json({ status: 'success', message: 'Updated the profile!', user: newUser, token: newToken });
 };

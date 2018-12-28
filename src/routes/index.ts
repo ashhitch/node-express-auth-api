@@ -10,6 +10,9 @@ const router = express.Router();
 // Base home route
 router.get('/', homeController.index);
 
+// Admin only
+router.get('/admin-only', authController.isLoggedIn, authController.roleAuth(['admin']), homeController.adminOnly);
+
 // Auth routes
 
 // Register for new account

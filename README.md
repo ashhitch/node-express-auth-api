@@ -26,11 +26,12 @@ Add DB and SMTP details ( I use [mlab](https://mlab.com/) and [mailtrap](https:/
 - Forgotten password request
 - Password reset
 - Update user details
+- User roles
 
 ## Roadmap
 - Password change (for logged in user)
 - Tests
-- Permissions / Roles
+- Better docs and examples
 
 ## Contributions 
 I welcome any feedback or pull requests on this project 👍 
