@@ -51,20 +51,20 @@ export const isLoggedIn = async (req: Request, res: Response, next: NextFunction
   const token = extractToken(req.headers);
 
   if (!token) {
-    return res.status(401).json({ auth: false, message: 'No token provided.' });
+    return res.status(401).json({ auth: false, status: 'error', message: 'No token provided.' });
   }
 
   await jwt.verify(token, SECRET, (err, decoded: any) => {
     if (err || !decoded) {
-      return res.status(500).json({ auth: false, message: 'Failed to authenticate token.' });
+      return res.status(500).json({ auth: false, status: 'error', message: 'Failed to authenticate token.' });
     }
 
     User.findById(decoded.user._id, { password: 0 }, (err, user: IUser) => {
       if (err) {
-        return res.status(500).json({ status: 'error', message: 'There was a problem finding the user.' });
+        return res.status(500).json({ auth: false, status: 'error', message: 'There was a problem finding the user.' });
       }
       if (!user) {
-        return res.status(422).json({ status: 'error', message: 'No user found.' });
+        return res.status(422).json({ auth: false, status: 'error', message: 'No user found.' });
       }
       // res.status(200).send(user);
       const returnUser = {
