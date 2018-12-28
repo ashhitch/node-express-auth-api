@@ -28,7 +28,8 @@ export const generateToken = (user: IUser) => {
   // user password in the token so we pick only the email and id
   const body = {
     _id: user._id,
-    email: user.email
+    email: user.email,
+    role: user.role
   };
   // Sign the JWT token and populate the payload with the user email and id
   const token = jwt.sign(

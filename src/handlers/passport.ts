@@ -1,5 +1,3 @@
-import { ExtractJwt, Strategy as JwtStrategy } from 'passport-jwt';
-
 import { SECRET } from './../helpers';
 import { default as User } from '../models/User';
 import passport from 'passport';

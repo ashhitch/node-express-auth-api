@@ -78,7 +78,8 @@ export const updateAccount = async (req: Request, res: Response) => {
 
   const updates = {
     name: req.body.name,
-    email: req.body.email
+    email: req.body.email,
+    role: req.body.role
   };
 
   const newUser: IUser = await (User as any).findOneAndUpdate(

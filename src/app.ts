@@ -1,9 +1,9 @@
+import ConnectRoles from 'connect-roles';
 import bodyParser from 'body-parser';
 import compression from 'compression';
 import dotenv from 'dotenv';
 import express from 'express';
 import expressValidator from 'express-validator';
-import flash from 'express-flash';
 import lusca from 'lusca';
 import mongo from 'connect-mongo';
 import mongoose from 'mongoose';
@@ -21,6 +21,9 @@ dotenv.config({ path: '.env' });
 
 // Create Express server
 const app = express();
+
+// User roles
+const roles = new ConnectRoles();
 
 // Connect to MongoDB
 const mongoUrl = process.env.DATABASE;
@@ -61,7 +64,7 @@ app.use(
 // Passport Auth
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(flash());
+app.use(roles.middleware());
 
 // Security
 app.use(lusca.xframe('SAMEORIGIN'));
