@@ -4,10 +4,9 @@ import { AuthToken, IUser, default as User } from '../models/User';
 import { NextFunction, Request, Response } from 'express';
 import { SECRET, extractToken, generateToken } from './../helpers';
 
+import { IApiResponse } from 'src/interfaces/api-response.interface';
 import jwt from 'jsonwebtoken';
 import { promisify } from 'es6-promisify';
-
-// err: Error, user: UserModel, info: IVerifyOptions
 
 export const validateRegister = (req: Request, res: Response, next: NextFunction) => {
   req.sanitizeBody('name');
@@ -23,7 +22,8 @@ export const validateRegister = (req: Request, res: Response, next: NextFunction
 
   const errors = req.validationErrors();
   if (errors) {
-    res.status(400).json({ title: 'Register', errors });
+    const data: IApiResponse = { status: 'error', message: errors };
+    res.status(400).json(data);
     return; // stop the fn from running
   }
   next(); // there were no errors!
@@ -35,14 +35,15 @@ export const register = async (req: Request, res: Response, next: NextFunction) 
   await register(user, req.body.password);
 
   const token = generateToken(user);
-
-  res.status(200).json({ status: 'success', auth: true, token: token });
+  const data: IApiResponse = { status: 'success', auth: true, message: 'User registered', token: token };
+  res.status(200).json(data);
 };
 
 export const account = (req: Request, res: Response) => {
   const user = (req as any).user;
   const token = generateToken(user);
-  res.status(200).json({ status: 'success', user, token });
+  const data: IApiResponse = { status: 'success', user, token };
+  res.status(200).json(data);
 };
 
 export const updateAccount = async (req: Request, res: Response) => {
@@ -51,20 +52,23 @@ export const updateAccount = async (req: Request, res: Response) => {
   let userID;
 
   if (!token) {
-    return res.status(401).json({ auth: false, message: 'No token provided.' });
+    return res.status(401).json({ status: 'error', auth: false, message: 'No token provided.' });
   }
 
   await jwt.verify(token, SECRET, async (err, decoded: any) => {
     if (err || !decoded) {
-      return res.status(500).json({ auth: false, message: 'Failed to authenticate token.' });
+      const data: IApiResponse = { status: 'error', auth: false, message: 'Failed to authenticate token.' };
+      return res.status(500).json(data);
     }
 
     await User.findById(decoded.user._id, { password: 0 }, (err, user: IUser) => {
       if (err) {
-        return res.status(500).json({ status: 'error', message: 'There was a problem finding the user.' });
+        const data = { status: 'error', message: 'There was a problem finding the user.' };
+        return res.status(500).json(data);
       }
       if (!user) {
-        return res.status(404).json({ status: 'error', message: 'No user found.' });
+        const data: IApiResponse = { status: 'error', message: 'No user found.' };
+        return res.status(404).json(data);
       }
 
       userID = decoded.user._id;
@@ -73,13 +77,13 @@ export const updateAccount = async (req: Request, res: Response) => {
   });
 
   if (!userID) {
-    return res.status(500).json({ status: 'error', message: 'There was a problem updating the user.' });
+    const data: IApiResponse = { status: 'error', message: 'There was a problem updating the user.' };
+    return res.status(500).json(data);
   }
 
   const updates = {
     name: req.body.name,
-    email: req.body.email,
-    role: req.body.role
+    email: req.body.email
   };
 
   const newUser: IUser = await (User as any).findOneAndUpdate(
@@ -89,6 +93,6 @@ export const updateAccount = async (req: Request, res: Response) => {
   );
 
   const newToken = generateToken(newUser);
-
-  return res.status(200).json({ status: 'success', message: 'Updated the profile!', user: newUser, token: newToken });
+  const data: IApiResponse = { status: 'success', message: 'Updated the profile!', user: newUser, token: newToken };
+  return res.status(200).json(data);
 };

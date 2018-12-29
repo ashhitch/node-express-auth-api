@@ -42,7 +42,11 @@ const userSchema = new mongoose.Schema(
     resetPasswordExpires: Date,
     tokens: Array,
     name: String,
-    role: String
+    role: {
+      type: String,
+      enum: ['editor', 'admin'],
+      default: 'editor'
+    }
   },
   { timestamps: true }
 );
