@@ -144,7 +144,7 @@ export const updatePassword = async (req: Request, res: Response) => {
   (user as any).resetPasswordExpires = undefined;
   const updatedUser = await user.save();
 
-  return res.json({ status: 'success', message: '💃 Nice! Your password has been reset!' });
+  return res.json({ status: 'success', message: ' Your password has been reset!' });
 };
 
 export const roleAuth = (roles: Array<String>) => {
