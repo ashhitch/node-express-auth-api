@@ -1,4 +1,4 @@
-# TypeScript Node AUth API Starter
+# TypeScript Node Auth API Starter
 
 A Basic Express API setup written in TypeScript, designed to be a starting place for any App requiring auth. 
 
@@ -28,7 +28,17 @@ Add DB and SMTP details ( I use [mlab](https://mlab.com/) and [mailtrap](https:/
 - Update user details
 - User roles
 
+## Routes
+- `/` - GET - returns welcome message
+- `/admin-only` - GET - Only accessible if user has admin role
+- `/register` - POST - Register a new user
+- `/login` - POST - Login returns user and token
+- `/account` - GET - Returns logged in user account
+- `/account/forgotten` - POST - Sends password reset email
+-  `/account/reset` - POST - Resets users password
+
 ## Roadmap
+- Demo data
 - Password change (for logged in user)
 - Tests
 - Better docs and examples
