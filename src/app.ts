@@ -11,6 +11,7 @@ import passport from 'passport';
 import path from 'path';
 import { default as routes } from './routes';
 import session from 'express-session';
+import graphql from './graphql';
 
 // compresses requests
 
@@ -97,5 +98,7 @@ app.use(express.static(path.join(__dirname, 'public'), { maxAge: 31557600000 }))
  *  app routes.
  */
 app.use(BASE_API, routes);
+
+graphql(app);
 
 export default app;
