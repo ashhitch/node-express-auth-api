@@ -1,6 +1,7 @@
 import users from './queries/users';
+import { gql } from 'apollo-server-express';
 
-const typeDefs = `
+const typeDefs = gql`
   type Query {
     #Get the users in the company, must be an admin
     users: [User] 

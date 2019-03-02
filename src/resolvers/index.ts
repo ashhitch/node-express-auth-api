@@ -1,9 +1,9 @@
 import * as users from './users';
 
 
-const { makeExecutableSchema, mergeSchemas } = require('graphql-tools');
+import { makeExecutableSchema, mergeSchemas } from 'graphql-tools';
 
-module.exports = mergeSchemas({
+export default mergeSchemas({
   schemas: [
     makeExecutableSchema(users) // more schemas here
   ],

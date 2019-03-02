@@ -1,3 +1,4 @@
+import { ApolloServer } from 'apollo-server-express';
 import ConnectRoles from 'connect-roles';
 import bodyParser from 'body-parser';
 import compression from 'compression';
@@ -11,7 +12,7 @@ import passport from 'passport';
 import path from 'path';
 import { default as routes } from './routes';
 import session from 'express-session';
-import graphql from './graphql';
+import { typeDefs, resolvers } from './resolvers/users';
 
 // compresses requests
 
@@ -76,6 +77,19 @@ app.use((req, res, next) => {
   next();
 });
 
+const server = new ApolloServer({
+  // These will be defined for both new or existing servers
+  typeDefs,
+  resolvers,
+  playground: {
+    endpoint: `http://localhost:7777/graphql`,
+    settings: {
+      'editor.theme': 'light'
+    }
+  },
+});
+
+
 app.use((req, res, next) => {
   // After successful login, redirect back to the intended page
   if (
@@ -97,8 +111,14 @@ app.use(express.static(path.join(__dirname, 'public'), { maxAge: 31557600000 }))
 /**
  *  app routes.
  */
+
+
 app.use(BASE_API, routes);
 
-graphql(app);
+console.log('test');
+console.log(server);
+server.applyMiddleware({ app, path: '/graphql' });
+
+
 
 export default app;
