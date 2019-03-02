@@ -31,8 +31,8 @@ export const validateRegister = (req: Request, res: Response, next: NextFunction
 
 export const register = async (req: Request, res: Response, next: NextFunction) => {
   const user: any = new User({ email: req.body.email, name: req.body.name });
-  const register = promisify((User as any).register).bind(User);
-  await register(user, req.body.password);
+  const registerReq = promisify((User as any).register).bind(User);
+  await registerReq(user, req.body.password);
 
   const token = generateToken(user);
   const data: IApiResponse = { status: 'success', auth: true, message: 'User registered', token: token };
@@ -61,8 +61,8 @@ export const updateAccount = async (req: Request, res: Response) => {
       return res.status(500).json(data);
     }
 
-    await User.findById(decoded.user._id, { password: 0 }, (err, user: IUser) => {
-      if (err) {
+    await User.findById(decoded.user._id, { password: 0 }, (findErr: any, user: IUser) => {
+      if (findErr) {
         const data = { status: 'error', message: 'There was a problem finding the user.' };
         return res.status(500).json(data);
       }

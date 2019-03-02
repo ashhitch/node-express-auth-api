@@ -14,7 +14,7 @@ export interface IUser extends mongoose.Document {
   password: string;
   resetPasswordToken: string;
   resetPasswordExpires: Date;
-  tokens?: AuthToken[];
+  tokens?: IAuthToken[];
   comparePassword: comparePasswordFunction;
   gravatar: (size: number) => string;
   role: string;
@@ -22,10 +22,10 @@ export interface IUser extends mongoose.Document {
 
 type comparePasswordFunction = (candidatePassword: string, cb: (err: any, isMatch: any) => {}) => void;
 
-export type AuthToken = {
+export interface IAuthToken  {
   accessToken: string;
   kind: string;
-};
+}
 
 const userSchema = new mongoose.Schema(
   {
