@@ -1,4 +1,4 @@
-import { ApolloServer } from 'apollo-server-express';
+
 import ConnectRoles from 'connect-roles';
 import bodyParser from 'body-parser';
 import compression from 'compression';
@@ -12,7 +12,8 @@ import passport from 'passport';
 import path from 'path';
 import { default as routes } from './routes';
 import session from 'express-session';
-import { typeDefs, resolvers } from './resolvers/users';
+
+import cors from 'cors';
 
 // compresses requests
 
@@ -26,6 +27,9 @@ const app = express();
 
 // User roles
 const roles = new ConnectRoles();
+
+// Cors
+app.use(cors());
 
 // Connect to MongoDB
 const mongoUrl = process.env.DATABASE;
@@ -77,17 +81,6 @@ app.use((req, res, next) => {
   next();
 });
 
-const server = new ApolloServer({
-  // These will be defined for both new or existing servers
-  typeDefs,
-  resolvers,
-  playground: {
-    endpoint: `http://localhost:7777/graphql`,
-    settings: {
-      'editor.theme': 'light'
-    }
-  },
-});
 
 
 app.use((req, res, next) => {
@@ -115,9 +108,6 @@ app.use(express.static(path.join(__dirname, 'public'), { maxAge: 31557600000 }))
 
 app.use(BASE_API, routes);
 
-console.log('test');
-console.log(server);
-server.applyMiddleware({ app, path: '/graphql' });
 
 
 
