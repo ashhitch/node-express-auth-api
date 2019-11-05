@@ -41,7 +41,7 @@
     "lodash": "^4.17.11",
     "lusca": "^1.6.1",
     "md5": "^2.2.1",
-    "mongoose": "^5.4.0",
+    "mongoose": "^5.7.5",
     "mongoose-mongodb-errors": "^0.0.2",
     "nodemailer": "^4.7.0",
     "passport": "^0.4.0",
