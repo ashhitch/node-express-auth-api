@@ -51,7 +51,7 @@
     "pug": "^2.0.3",
     "request": "^2.88.0",
     "request-promise": "^4.2.2",
-    "validator": "^10.10.0",
+    "validator": "^13.7.0",
     "winston": "^3.1.0"
   },
   "devDependencies": {
